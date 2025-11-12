@@ -5,15 +5,16 @@ import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppColors } from '@/constants/theme';
 
+// sert de conteneur sûr/sécurisé pour l'affichage de contenu
 const wrapper = ({ children } : {children: React.ReactNode}) => { 
 // le typage react.reactNode sert a typer la props du children, 
 // represente tous ce que react peut return, 
 // ca garantie que ca va accepter tous ce qui va etre mit
 // rend le typage large / laxiste
   return (
-    <SafeAreaView style={styles.safeView}>
-        <View style={styles.container}>
-            {children}
+    <SafeAreaView style={styles.safeView}> {/* SafeAreaView prend en compte les zone a eviter sur les differents mobile */}
+        <View style={styles.container}> {/* View est la vue principale contenant le contenu enfant */}
+            {children} {/* children affiche dynamiquement ce que le wrapper enveloppera */}
         </View> 
     </SafeAreaView>
   )
