@@ -122,7 +122,24 @@ export default function HomeScreen() {
               )}
             />
           </View>
-          
+          <View style={styles.newestSection}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Nouveautés</Text>
+              <TouchableOpacity>
+                <Text>Voir tout</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.productsGrid}>
+              {products?.map((product) => (
+                <View key={product.id} style={styles.productContainer}>
+                <ProductCard
+                  product={product}
+                  customStyle={{width: "100%"}}
+                />
+                </View>
+              ))}
+            </View>
+          </View>
         </ScrollView>
       </View>
     </View>
@@ -201,5 +218,9 @@ const styles = StyleSheet.create({
   },
   featuredSection : {
 
+  },
+  productsGrid : {
+    justifyContent: 'space-between',
+    paddingRight: 20,
   }
 });
