@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppColors } from '@/constants/theme';
 
 // sert de conteneur sûr/sécurisé pour l'affichage de contenu
-const wrapper = ({ children } : {children: React.ReactNode}) => { 
+const Wrapper = ({ children } : {children: React.ReactNode}) => { 
 // le typage react.reactNode sert a typer la props du children, 
 // represente tous ce que react peut return, 
 // ca garantie que ca va accepter tous ce qui va etre mit
@@ -20,7 +20,7 @@ const wrapper = ({ children } : {children: React.ReactNode}) => {
   )
 }
 
-export default wrapper
+export default Wrapper
 
 const styles = StyleSheet.create({
     safeView : {

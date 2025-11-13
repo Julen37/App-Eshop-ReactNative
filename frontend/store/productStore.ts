@@ -47,7 +47,16 @@ export const useProductStore = create<ProductsState>()(
                 }
             },
             fetchCategories: async () => {
-                
+                try {
+                    set({ loading: true, error: null});
+                    const categories = await getCategories();
+                    set({ 
+                        categories,
+                        loading: false,
+                    });
+                } catch (error: any) {
+                    set({ error: error.message, loading: false});
+                }
             },
         }),
         //option du middleware de persistance
