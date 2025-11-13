@@ -76,7 +76,7 @@ export default function HomeScreen() {
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Catégories</Text>
             </View>
-            {/* scrollview categories */}
+{/* scrollview categories */}
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -99,8 +99,8 @@ export default function HomeScreen() {
               ))}
             </ScrollView>
           </View>
-          {/* meilleures ventes */}
-          <View>
+{/* meilleures ventes */}
+          <View style={styles.featuredSection}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Meilleures Ventes</Text>
               <TouchableOpacity 
@@ -116,12 +116,13 @@ export default function HomeScreen() {
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.featuredProductsContainer}
               renderItem={({ item }) => (
-                <View>
-                  <ProductCard item={item} compact/>
+                <View style={styles.featuredProductContainer}>
+                  <ProductCard product={item} compact/>
                 </View>
               )}
             />
           </View>
+          
         </ScrollView>
       </View>
     </View>
@@ -188,5 +189,17 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Medium',
     fontSize: 14,
     color: AppColors.primary[500]
+  },
+  featuredProductsContainer : {
+    
+  },
+  featuredProductContainer : {
+
+  },
+  seeAllText : {
+
+  },
+  featuredSection : {
+
   }
 });
