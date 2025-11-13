@@ -2,6 +2,7 @@ import { Product } from "@/type";
 
 const API_URL = "https://fakestoreapi.com";
 
+//#region All Products
 // recuperation de tous les produits via l'api
 const getProducts = async (): Promise<Product[]> => { 
 // fonction async avec await dedans pour avoir la resolution de la promesse pour la retourner 
@@ -17,3 +18,20 @@ const getProducts = async (): Promise<Product[]> => {
         throw error;
     }
 };
+//#endregion All products
+
+//#region All Categories
+// recuperation de toutes les categories de produits disponibles via l'api
+const getCategories = async (): Promise<string[]> => { 
+    try {
+        const response = await fetch(`${API_URL}/products/categories`);
+        if (!response.ok) { 
+            throw new Error('Network response was not ok');
+        }
+        return await response.json();
+    } catch (error) {
+        console.log('Error fetching products:', error); 
+        throw error;
+    }
+};
+//#endregion All Categories
