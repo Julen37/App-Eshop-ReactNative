@@ -18,7 +18,7 @@ interface ProductsState {
     error: string | null;                       //message d'erreur, s'il y en a
 //action to fetch products
     fetchProducts: () => Promise<void>;         //methode pour recuperer les produits depuis l'api
-    fetchCategories?: () => Promise<void>;      //methode pour recuperer les categories depuis l'api
+    fetchCategories: () => Promise<void>;      //methode pour recuperer les categories depuis l'api
 };
 
 //création du store avec Zustand et persistance avec AsyncStorage
@@ -45,6 +45,9 @@ export const useProductStore = create<ProductsState>()(
                 } catch (error: any) {
                     set({ error: error.message, loading: false}); // enregistre l'erreur et stop le chargement
                 }
+            },
+            fetchCategories: async () => {
+                
             },
         }),
         //option du middleware de persistance
