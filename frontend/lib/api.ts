@@ -35,3 +35,5 @@ const getCategories = async (): Promise<string[]> => {
     }
 };
 //#endregion All Categories
+
+export { getProducts, getCategories };
