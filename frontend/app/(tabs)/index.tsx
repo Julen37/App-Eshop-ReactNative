@@ -22,8 +22,8 @@ export default function HomeScreen() {
 
   useEffect(() => {
     if (products.length > 0) {
-      const reverseProducts = [...products].reverse();
-      setFeaturedProducts(reverseProducts as Product[]);
+      const reverseProducts = [...products].reverse(); // creer une copie inversée des produits
+      setFeaturedProducts(reverseProducts as Product[]); // met a jour le state local featuredProducts
     }
   }, [products]); //selection de produits en vedette quand products change
 
