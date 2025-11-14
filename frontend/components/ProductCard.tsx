@@ -42,8 +42,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 {title}
             </Text>
             <View style={styles.footer}>
-                <Text style={[styles.price, !compact && { marginBottom: 4}]}>€{price.toFixed(2)}</Text>
-                {!compact && <Button onPress={handleAddToCart} title='Ajouter au panier' size='small' variant='outline'/>}
+                <Text style={[styles.price, !compact && { marginBottom: 6}]}>€{price.toFixed(2)}</Text>
+                {!compact && (<Button onPress={handleAddToCart} title='Ajouter au panier' size='small' variant='outline'/>)}
             </View>
         </View>
     </TouchableOpacity>
@@ -60,9 +60,9 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
     footer : {
-        flexDirection: 'row',
+        // flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center',
+        // alignItems: 'center',
     },
     title : {
         fontSize: 14,

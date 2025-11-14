@@ -214,19 +214,24 @@ const styles = StyleSheet.create({
 
   },
   seeAllText : {
-
+    fontFamily: 'Inter-Medium',
+    fontSize: 14,
+    color: AppColors.primary[500],
   },
   featuredSection : {
-
+    marginVertical: 16,
   },
   productsGrid : {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'space-between',
     paddingRight: 20,
   },
   newestSection : {
-
+    marginVertical: 16,
+    marginBottom: 32,
   },
   productContainer : {
-    
+    width: "48%"
   }
 });

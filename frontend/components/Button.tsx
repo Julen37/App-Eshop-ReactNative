@@ -17,7 +17,7 @@ interface ButtonProps {
 const Button:React.FC<ButtonProps> = ({
     title, onPress,
     size='medium',
-    variant="primary", //j'ai rajouté sinon erreur
+    variant="primary",
     fullWidth=false,
     disabled=false,
     loading=false,
@@ -52,7 +52,8 @@ const Button:React.FC<ButtonProps> = ({
                     variant === 'primary'
                     ? AppColors.background.primary
                     : AppColors.primary[500]
-                }/>
+                }
+            />
         ) : (
             <Text style={textStyles}>{title}</Text>
         )}
