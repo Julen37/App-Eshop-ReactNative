@@ -3,6 +3,7 @@ import React from 'react'
 import { Product } from '@/type';
 import { AppColors } from '@/constants/theme';
 import Button from './Button';
+import Toast from 'react-native-toast-message';
 
 interface ProductCardProps {
     product: Product;
@@ -16,7 +17,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
     const { id, title, price, category, image } = product;
 
     const handleAddToCart = () => {
-        Alert.alert(`Produit ${title} ajouté au panier`);
+        Toast.show({
+            type: 'success',
+            text1: `Produit ${title} ajouté au panier`,
+            text2: "Voir le panier pour finaliser votre achat.",
+            visibilityTime: 2000,
+            // position: 'bottom',
+        })
+        // Alert.alert(`Produit ${title} ajouté au panier`);
     }
 
   return (
