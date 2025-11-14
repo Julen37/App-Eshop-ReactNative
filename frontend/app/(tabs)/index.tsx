@@ -222,5 +222,11 @@ const styles = StyleSheet.create({
   productsGrid : {
     justifyContent: 'space-between',
     paddingRight: 20,
+  },
+  newestSection : {
+
+  },
+  productContainer : {
+    
   }
 });

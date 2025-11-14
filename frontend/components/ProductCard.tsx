@@ -1,7 +1,8 @@
-import { Image, StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native'
+import { Alert, Image, StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native'
 import React from 'react'
 import { Product } from '@/type';
 import { AppColors } from '@/constants/theme';
+import Button from './Button';
 
 interface ProductCardProps {
     product: Product;
@@ -13,6 +14,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
     product, compact=false, customStyle
 }) => {
     const { id, title, price, category, image } = product;
+
+    const handleAddToCart = () => {
+        Alert.alert(`Produit ${title} ajouté au panier`);
+    }
+
   return (
     <TouchableOpacity style={
         [styles.card, compact && styles.compactCard, 
@@ -36,7 +42,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 {title}
             </Text>
             <View style={styles.footer}>
-                <Text style={styles.price}>€{price.toFixed(2)}</Text>
+                <Text style={[styles.price, !compact && { marginBottom: 4}]}>€{price.toFixed(2)}</Text>
+                {!compact && <Button onPress={handleAddToCart} title='Ajouter au panier' size='small' variant='outline'/>}
             </View>
         </View>
     </TouchableOpacity>
