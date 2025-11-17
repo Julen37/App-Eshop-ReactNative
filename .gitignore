@@ -1,0 +1,11 @@
+# Ignorer les fichiers d'environnement
+/backend/.env
+/frontend/.env
+
+# Ignorer node_modules dans les deux dossiers
+# /frontend/node_modules/
+# /backend/node_modules/
+
+# Ignorer autres fichiers temporaires et logs
+*.log
+.DS_Store
