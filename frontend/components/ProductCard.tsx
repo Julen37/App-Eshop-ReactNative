@@ -4,6 +4,7 @@ import { Product } from '@/type';
 import { AppColors } from '@/constants/theme';
 import Button from './Button';
 import Toast from 'react-native-toast-message';
+import { useRouter } from 'expo-router';
 
 interface ProductCardProps {
     product: Product;
@@ -15,6 +16,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
     product, compact=false, customStyle
 }) => {
     const { id, title, price, category, image } = product;
+
+    const router = useRouter();
+    const handleProductRoute = (e: any) => {
+        //logique pour naviguer vers la page du produit
+        // on ecrit la route de cette maniere car expo router n'accepte pas les types dynamiques
+        // juste les routes strictes/statiques
+        router.push(`/product/${id}` as any);
+    };
 
     const handleAddToCart = () => {
         Toast.show({
@@ -31,6 +40,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
     <TouchableOpacity style={
         [styles.card, compact && styles.compactCard, 
         customStyle]}
+        onPress={handleProductRoute}
         activeOpacity={0.8}
     >
         <View style={styles.imageContainer}>

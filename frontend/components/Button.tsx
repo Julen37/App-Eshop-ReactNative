@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     //taille du bouton
     small : {
         paddingVertical: 8,
-        paddingHorizontal: 16,
+        paddingHorizontal: 8, // avant 16
     },
     medium : {
         paddingVertical: 12,
