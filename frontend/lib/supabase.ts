@@ -47,3 +47,25 @@ const supabaseUrl = EXPO_PUBLIC_SUPABASE_URL || "";
 const supabaseAnonKey = EXPO_PUBLIC_SUPABASE_ANON_KEY || "";
 
 // Création du client Supabase avec configuration de l'authentification
+export const supabase = createClient(supabaseUrl,supabaseAnonKey, {
+    auth: {
+        // on indique a supabase d'utiliser notre adaptateur personnalisé
+        storage: ExpoSecureStoreAdapter,
+        // active le raffraichissement automatique du token losqu'il expire (lui en donne un nouveau tout en le gardant connecté)
+        autoRefreshToken: true,
+        // rend la session persistante (l'utilisateur reste connecté entre les redemarrages)
+        persistSession: true,
+        // desactive la detection de session a partir de l'url, inutile sur mobile
+        detectSessionInUrl: false, //mettre false pour React Native
+    },
+
+    // Configuration du module Realtime de Supabase
+    // En mettant transport à undefined, on désactive la spécification explicite
+    // du type de transport utilisé (WebSocket ou autre).
+    // Cela permet au SDK Supabase de choisir automatiquement le transport adapté
+    // à la plateforme, ce qui évite des erreurs sur React Native ou Expo
+    // liées à un transport non supporté ou mal configuré.
+    realtime: {
+        transport: undefined,
+    }
+});
