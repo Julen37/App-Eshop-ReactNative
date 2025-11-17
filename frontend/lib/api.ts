@@ -18,7 +18,22 @@ const getProducts = async (): Promise<Product[]> => {
         throw error;
     }
 };
-//#endregion All products
+//#endregion
+
+//#region Single Product
+export const getProduct = async (id:number): Promise<Product> => {
+    try {
+        const response = await fetch(`${API_URL}/products/${id}`);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return await response.json();
+    } catch (error) {
+        console.error(`Error fetching product with id ${id}:`, error);
+        throw error;
+    }
+};
+//#endregion
 
 //#region All Categories
 // recuperation de toutes les categories de produits disponibles via l'api
@@ -34,6 +49,6 @@ const getCategories = async (): Promise<string[]> => {
         throw error;
     }
 };
-//#endregion All Categories
+//#endregion
 
 export { getProducts, getCategories };

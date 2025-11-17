@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { AppColors } from '@/constants/theme'
 import { AntDesign, Feather, MaterialCommunityIcons } from '@expo/vector-icons'
