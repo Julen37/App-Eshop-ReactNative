@@ -46,6 +46,8 @@ export default function TabLayout() {
       <Tabs.Screen name="cart" options={{ href: null }} />
       <Tabs.Screen name="favorites" options={{ href: null }} />
       <Tabs.Screen name="product/[id]" options={{ href: null, tabBarStyle: {display: 'none'}}} /> {/* tabbarstyle en none enleve la bar en bas */}
+      <Tabs.Screen name="login" options={{ href: null }} />
+      <Tabs.Screen name="signup" options={{ href: null }} />
     </Tabs>
   );
 }
