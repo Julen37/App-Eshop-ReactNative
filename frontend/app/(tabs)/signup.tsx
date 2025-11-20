@@ -6,6 +6,7 @@ import { Foundation } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
 import { useAuthStore } from '@/store/authStore'
 import TextInput from '@/components/TextInput'
+import Button from '@/components/Button'
 
 const SignupScreen = () => {
     const [email, setEmail] = useState("");
@@ -17,6 +18,49 @@ const SignupScreen = () => {
 
     const router = useRouter();
     const { signup, isLoading, error } = useAuthStore();
+
+    const validateForm = () => {
+        let isValid = true;
+        // validation email
+        if (!email.trim()) {
+            setEmailError('Email obligatoire');
+            isValid = false;
+        } else if (!/\S+@\S+\.\S+/.test(email)) { //regex
+            setEmailError('Adresse email invalide');
+            isValid = false;
+        } else {
+            setEmailError("");
+        }
+        // validation mdp
+        if (!password) {
+            setPasswordError('Mot de passe obligatoire');
+            isValid = false;
+        } else if (password.length < 6) {
+            setPasswordError('Le mot de passe doit contenir au moins 6 caractères');
+            isValid = false;
+        } else {
+            setPasswordError("");
+        }
+        // confirmation validation du mdp
+        if (password !== confirmPassword) {
+            setConfirmError('Les mots de passe ne correspondent pas');
+            isValid = false;
+        } else {
+            setConfirmError("");
+        }
+        return isValid
+    }
+
+    const handleSignUp = async () => {
+        // console.log(email, password, confirmPassword)
+        if (validateForm()) {
+            await signup(email, password);
+            router.push("/(tabs)/login");
+            setEmail("");
+            setPassword("");
+            setConfirmPassword("");
+        }
+    }
 
     return (
         <Wrapper>
@@ -35,7 +79,7 @@ const SignupScreen = () => {
                         <Text style={styles.title}>Shopngo</Text>
                         <Text style={styles.subtitle}>Créez un nouveau compte</Text>
                     </View>
-                    <View>
+                    <View style={styles.form}>
                         {error && <Text style={styles.errorText}>{error}</Text>}
                         <TextInput 
                             label='Email'
@@ -62,6 +106,13 @@ const SignupScreen = () => {
                             placeholder='Entrez votre mot de passe'
                             error={confirmError}
                             secureTextEntry
+                        />
+                        <Button
+                            onPress={handleSignUp}
+                            title='Inscription'
+                            fullWidth
+                            loading={isLoading}
+                            style={styles.button}
                         />
                     </View>
                 </ScrollView>

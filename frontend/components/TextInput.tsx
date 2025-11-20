@@ -1,7 +1,7 @@
 import { KeyboardTypeOptions, StyleProp, 
         StyleSheet, Text, 
         TextStyle, View,
-         ViewStyle, TextInput as RNTectInput } from 'react-native'
+         ViewStyle, TextInput as RNTextInput } from 'react-native'
 import React from 'react'
 import { AppColors } from '@/constants/theme'
 
@@ -13,7 +13,7 @@ interface TextInputProps{
     error?: string;
     secureTextEntry?: boolean;
     keyboardType?: KeyboardTypeOptions;
-    autoCapitalize?: "none" | "sentence" | "words" | "characters";
+    autoCapitalize?: "none" | "sentences" | "words" | "characters";
     autoCorrect?: boolean;
     multiline?: boolean;
     numberOfLines?: number;
@@ -27,7 +27,7 @@ const TextInput:React.FC<TextInputProps> = ({
     placeholder, label,
     error, secureTextEntry = false,
     keyboardType = "default", 
-    autoCapitalize = "sentence",
+    autoCapitalize = "sentences",
     autoCorrect = true, multiline = false,
     numberOfLines = 1, style,
     imputStyle, labelStyle,
@@ -36,7 +36,7 @@ const TextInput:React.FC<TextInputProps> = ({
   return (
     <View style={[styles.container, style]}>
         {label && <Text style={[styles.label, labelStyle]}>{label}</Text>}
-      <RNTectInput
+      <RNTextInput
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
@@ -52,8 +52,8 @@ const TextInput:React.FC<TextInputProps> = ({
             multiline && styles.multiligneInput,
             error && styles.inputError,
         ]}
-
     />
+    {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   )
 }
