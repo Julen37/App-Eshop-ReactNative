@@ -41,7 +41,7 @@ export default function HomeScreen() {
     router.push({
       pathname: '/(tabs)/shop',
       params: {
-        category:category
+        category
       },
     });
   }

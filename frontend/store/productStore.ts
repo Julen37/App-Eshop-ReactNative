@@ -73,7 +73,7 @@ export const useProductStore = create<ProductsState>(
                         set ({ filteredProducts: get().products, loading: false});
                     }
                 } catch (error: any) {
-                    set({ error.message, loading: false});
+                    set({ error: error.message, loading: false});
                 }
             },
             searchProducts: async (query: string) => {

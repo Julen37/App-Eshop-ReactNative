@@ -8,29 +8,43 @@ import React, { useEffect, useState } from 'react'
 import { AppColors } from '@/constants/theme';
 import Wrapper from '@/components/Wrapper';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams, useRouter } from 'expo-router';
+import { useProductStore } from '@/store/productStore';
 
 const ShopScreen = () => {
+  // Récupération des paramètres de recherche et catégorie dans l'URL
+  const {q:searchParam, category:categoryParam} = useLocalSearchParams<{
+    q?:string;
+    category?:string}
+  >()
+  console.log(categoryParam);
+
+  // Extraction des méthodes et états du store produit (zustand ou autre)
+  const {
+    filteredProducts, categories,
+    selectedCategory, loading,
+    error, fetchProducts,
+    fetchCategories, setCategory,
+    sortProducts,
+  } = useProductStore();
 
   const [products, setProducts] = useState([]);
   const [showShortModal, setShowShortModal] = useState(false);
   const [activeSortOption, setActiveSortOption] = useState<string | null>(null);
   const [isFilterActive, setIsFilterActive] = useState(false);
 
+  // Hook d'effet appelé au montage du composant :
+  // - Récupération des catégories et produits via le store
+  // - Initialisation de la catégorie sélectionnée si spécifiée dans les params
   useEffect(() => {
-    const getProducts = async() => {
-      const response = await fetch("https://fakestoreapi.com/products", {
-        method: "GET",
-        headers: {
-          "Content-Type" : "application/json",
-        },
-      });
-      const data = await response.json();
-      setProducts(data);
-      // console.log(data);
-    };
-    getProducts();
+    fetchCategories();
+    fetchProducts();
+    if (categoryParam) {
+      setCategory(categoryParam);
+    }
   }, []);
+
+  const router = useRouter();
 
   const renderHeader = () => {
     return (
@@ -72,9 +86,39 @@ const ShopScreen = () => {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.categoriesContainer}
         > 
-          <TouchableOpacity style={[styles.categoryButton, styles.selectedCategory]}>
-            <Text>Tous</Text>
+          <TouchableOpacity 
+            style={[
+              styles.categoryButton, 
+              selectedCategory === null && styles.selectedCategory
+            ]}
+          >
+            <Text
+              style={[
+                styles.categoryText, 
+                selectedCategory === null && styles.selectedCategoryText
+              ]}
+            >
+              Tous
+            </Text>
           </TouchableOpacity>
+          {categories?.map((category) =>(
+            <TouchableOpacity
+              key={category}
+              style={[
+                styles.categoryButton,
+                selectedCategory === category && styles.selectedCategory,
+              ]}
+            >
+              <Text
+                style={[
+                styles.categoryText,
+                selectedCategory === category && styles.selectedCategoryText,
+              ]}
+              >
+                {category.charAt(0).toUpperCase() + category.slice(1)}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </ScrollView>
       </View>
     )
