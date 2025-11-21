@@ -1,4 +1,6 @@
-import { ActivityIndicator, StyleProp, StyleSheet, Text, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native'
+import { ActivityIndicator, StyleProp, 
+        StyleSheet, Text, TextStyle, 
+        TouchableOpacity, ViewStyle } from 'react-native'
 import React from 'react'
 import { AppColors } from '@/constants/theme'
 

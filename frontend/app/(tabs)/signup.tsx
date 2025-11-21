@@ -1,4 +1,5 @@
-import { KeyboardAvoidingView, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { KeyboardAvoidingView, ScrollView, 
+        StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
 import { AppColors } from '@/constants/theme'
 import Wrapper from '@/components/Wrapper'
@@ -55,7 +56,7 @@ const SignupScreen = () => {
         // console.log(email, password, confirmPassword)
         if (validateForm()) {
             await signup(email, password);
-            router.push("/(tabs)/login");
+            router.push("/(tabs)/profile");
             setEmail("");
             setPassword("");
             setConfirmPassword("");
