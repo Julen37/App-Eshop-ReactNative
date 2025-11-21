@@ -1,5 +1,5 @@
 // import des fonctions d'api et des types nécessaires
-import { getCategories, getProducts } from '@/lib/api';
+import { getCategories, getProducts, getProdutsByCategory, searchProductsApi } from '@/lib/api';
 // import du type product
 import { Product } from '@/type';
 // import des bibliotheque necessaire pour la gestion de l'etat avec persistance
@@ -16,15 +16,18 @@ interface ProductsState {
     categories: string[];                       //liste des categories de produits dispo
     loading: boolean;                           //indicateur de chargement
     error: string | null;                       //message d'erreur, s'il y en a
+    selectedCategory: string | null;
 //action to fetch products
     fetchProducts: () => Promise<void>;         //methode pour recuperer les produits depuis l'api
     fetchCategories: () => Promise<void>;      //methode pour recuperer les categories depuis l'api
+    setCategory: (category: string | null) =>Promise<void>;
+    searchProducts: (query: string) => void;
+    sortProducts: (sortBy: "price-asc" | "price-desc" | "rating") => void;
+    searchProductsRealTime: (query: string) => Promise<void>;
 };
 
 //création du store avec Zustand et persistance avec AsyncStorage
-export const useProductStore = create<ProductsState>()(
-    // middleware de persistance
-    persist(
+export const useProductStore = create<ProductsState>(
         (set, get)=>({
             //initialisation des valeurs du state
             products: [],
@@ -32,6 +35,7 @@ export const useProductStore = create<ProductsState>()(
             categories: [],
             loading: false,
             error: null,
+            selectedCategory: null,
 
             fetchProducts: async () => {
                 try {
@@ -58,11 +62,75 @@ export const useProductStore = create<ProductsState>()(
                     set({ error: error.message, loading: false});
                 }
             },
-        }),
-        //option du middleware de persistance
-        {
-            name: 'product-storage',
-            storage: createJSONStorage(() => AsyncStorage),
-        }
-    )
+            setCategory: async (category: string | null) => {
+                try {
+                    set({ selectedCategory: category, loading: true, error: null});
+
+                    if (category) {
+                        const products = await getProdutsByCategory(category);
+                        set ({ filteredProducts: products, loading: false});
+                    } else {
+                        set ({ filteredProducts: get().products, loading: false});
+                    }
+                } catch (error: any) {
+                    set({ error.message, loading: false});
+                }
+            },
+            searchProducts: async (query: string) => {
+                const searchTerm = query.toLowerCase().trim();
+                const {products, selectedCategory} = get();
+
+                let filtered = products;
+
+                if (selectedCategory) {
+                    filtered = products.filter(
+                        (product) => product.category === selectedCategory
+                    );
+                }
+
+                if (searchTerm) {
+                    filtered = filtered.filter(
+                        (product) =>
+                            product.title.toLowerCase().includes(searchTerm) ||
+                            product.description.toLowerCase().includes(searchTerm) ||
+                            product.category.toLowerCase().includes(searchTerm)
+                    );
+                }
+                set({ filteredProducts: filtered});
+            },
+            sortProducts: (sortBy: "price-asc" | "price-desc" | "rating") => {
+                const {filteredProducts} = get();
+                let sorted = [...filteredProducts];
+
+                switch (sortBy) {
+                    case "price-asc":
+                        sorted.sort((a, b) => a.price - b.price);
+                        break;
+                    case "price-desc":
+                        sorted.sort((a, b) => b.price - a.price);
+                        break;
+                    case "rating":
+                        sorted.sort((a, b) => b.rating.rate - a.rating.rate);
+                        break;
+                    default:
+                        break;
+                }
+                set({ filteredProducts: sorted});
+            },
+            searchProductsRealTime: async (query: string) => {
+                try {
+                    set({ loading: true, error: null});
+
+                    if (!query.trim()) {
+                        set({ filteredProducts: get().products, loading: false});
+                        return;
+                    }
+                    const searchResults = await searchProductsApi(query);
+                    set({ filteredProducts: searchResults, loading: false});
+                } catch (error:any) {
+                    set({ error: error.message, loading: false});
+
+                }
+            },
+        })
 );

@@ -51,4 +51,44 @@ const getCategories = async (): Promise<string[]> => {
 };
 //#endregion
 
-export { getProducts, getCategories };
+//#region By Category
+const getProdutsByCategory = async (category: string): Promise<Product[]> => {
+    try {
+        const response = await fetch(`${API_URL}/products/category/${category}`);
+        if (!response.ok) {
+            throw new Error("Network reponse was not ok");
+        }
+        return await response.json();
+    } catch (error) {
+        console.error(`Failed to fetch products in category ${category}`, error);
+        throw error;
+    }
+};
+//#endregion
+
+//#region search products
+const searchProductsApi = async (query: string): Promise<Product[]> => {
+    try {
+        const response = await fetch(`${API_URL}/products`);
+        if (!response.ok) {
+            throw new Error("Network reponse was not ok");
+        }
+
+        const products = await response.json();
+        const searchTerm = query.toLowerCase().trim();
+
+        return products.filter(
+            (product :Product) =>
+                product.title.toLowerCase().includes(searchTerm) ||
+                product.description.toLowerCase().includes(searchTerm) ||
+                product.category.toLowerCase().includes(searchTerm)
+        );
+    } catch (error) {
+        console.error(`Failed to fetch products:`, error);
+        throw error;
+    }
+};
+//#endregion
+
+
+export { getProducts, getCategories, getProdutsByCategory, searchProductsApi };
