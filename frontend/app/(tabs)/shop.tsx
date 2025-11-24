@@ -87,6 +87,7 @@ const ShopScreen = () => {
           contentContainerStyle={styles.categoriesContainer}
         > 
           <TouchableOpacity 
+            onPress={() => setCategory(null)}
             style={[
               styles.categoryButton, 
               selectedCategory === null && styles.selectedCategory
@@ -103,6 +104,7 @@ const ShopScreen = () => {
           </TouchableOpacity>
           {categories?.map((category) =>(
             <TouchableOpacity
+              onPress={() => setCategory(category)}
               key={category}
               style={[
                 styles.categoryButton,
