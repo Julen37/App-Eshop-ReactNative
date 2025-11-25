@@ -1,5 +1,6 @@
 import { 
   FlatList,
+  Modal,
   Platform,
     ScrollView,
     StyleSheet, Text, 
@@ -33,8 +34,11 @@ const ShopScreen = () => {
   } = useProductStore();
 
   const [products, setProducts] = useState([]);
+  // État local pour afficher/masquer la modal de tri
   const [showShortModal, setShowShortModal] = useState(false);
+  // État pour indiquer l'option de tri active (prix, note...)
   const [activeSortOption, setActiveSortOption] = useState<string | null>(null);
+  // État pour savoir si un filtre est actif ou non
   const [isFilterActive, setIsFilterActive] = useState(false);
 
   // Hook d'effet appelé au montage du composant :
@@ -74,8 +78,9 @@ const ShopScreen = () => {
               </View>
           </TouchableOpacity>
           <TouchableOpacity
+            onPress={ () => setShowShortModal(true)}
             style={[
-              styles.sortOption,
+              styles.sortOptionView,
               isFilterActive && styles.activeSortButton,
             ]}
           >
@@ -91,6 +96,7 @@ const ShopScreen = () => {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.categoriesContainer}
         > 
+          {/* Bouton "Tous" pour réinitialiser la catégorie */}
           <TouchableOpacity 
             onPress={() => setCategory(null)}
             style={[
@@ -107,6 +113,7 @@ const ShopScreen = () => {
               Tous
             </Text>
           </TouchableOpacity>
+          {/* Boutons pour chaque catégorie disponible */}
           {categories?.map((category) =>(
             <TouchableOpacity
               onPress={() => setCategory(category)}
@@ -131,6 +138,7 @@ const ShopScreen = () => {
     )
   }
 
+  // Gestion du cas d'erreur dans la récupération des produits
   if (error) {
     return (
       <Wrapper>
@@ -139,6 +147,18 @@ const ShopScreen = () => {
         </View>
       </Wrapper>
     )
+  }
+
+  //sortBY rappelez vous le productStore price-asc price desc rating on a fait le switch case
+  const handleSort = (sortBy: "price-asc" | "price-desc" | "rating") => {
+    // Appliquer le tri dans le store
+    sortProducts(sortBy);
+    // Mémoriser l'option de tri active
+    setActiveSortOption(sortBy);
+    // Fermer la modal de tri
+    setShowShortModal(false);
+    // Activer le filtre visuel
+    setIsFilterActive(true);
   }
 
   return (
@@ -169,6 +189,37 @@ const ShopScreen = () => {
           ListEmptyComponent={<View style={styles.footer}/>}
         />
       )}
+      <Modal
+        visible={showShortModal}
+        transparent
+        animationType='fade'
+        onRequestClose={() => setShowShortModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Trier par</Text>
+              <TouchableOpacity onPress={() => setShowShortModal(false)}>
+                  <AntDesign
+                    name='close'
+                    size={24}
+                    color={AppColors.text.primary}
+                    onPress={() => setShowShortModal(false)}
+                  />
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity
+              style={[
+                styles.sortOption,
+                activeSortOption === "price-asc" && styles.activeSortButton,
+              ]}
+              onPress={() => handleSort("price-asc")}
+            >
+              <Text style={styles.sortOptionText}>Prix: Plus bas au plus élevé</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </Wrapper>
   )
 }
