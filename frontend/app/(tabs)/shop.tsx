@@ -47,6 +47,7 @@ const ShopScreen = () => {
       setCategory(categoryParam);
     }
   }, []);
+  // console.log(loading)
 
   const router = useRouter();
 
@@ -143,12 +144,16 @@ const ShopScreen = () => {
   return (
     <Wrapper>
       {renderHeader()}
-      {filteredProducts?.length === 0 ? (
+      {loading ? (
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+          <LoadingSpinner fullScreen/>
+        </View>
+      ) : filteredProducts?.length === 0 ? (
         <EmptyState
           type='search'
           message='Pas de produits trouvé pour votre recherche'
         />
-      ): (
+      ) : (
         <FlatList
           data={filteredProducts}
           keyExtractor={(item) => item.id.toString()}
@@ -163,11 +168,6 @@ const ShopScreen = () => {
           showsVerticalScrollIndicator
           ListEmptyComponent={<View style={styles.footer}/>}
         />
-      )}
-      {loading && (
-        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-          <LoadingSpinner fullScreen/>
-        </View>
       )}
     </Wrapper>
   )
