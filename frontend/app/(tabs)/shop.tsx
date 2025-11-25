@@ -1,4 +1,5 @@
 import { 
+  FlatList,
   Platform,
     ScrollView,
     StyleSheet, Text, 
@@ -10,6 +11,9 @@ import Wrapper from '@/components/Wrapper';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams, useRouter } from 'expo-router';
 import { useProductStore } from '@/store/productStore';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import EmptyState from '@/components/EmptyState';
+import ProductCard from '@/components/ProductCard';
 
 const ShopScreen = () => {
   // Récupération des paramètres de recherche et catégorie dans l'URL
@@ -126,9 +130,45 @@ const ShopScreen = () => {
     )
   }
 
+  if (error) {
+    return (
+      <Wrapper>
+        <View style={styles.errorContainer}>
+          <Text>Erreur: {error}</Text>
+        </View>
+      </Wrapper>
+    )
+  }
+
   return (
     <Wrapper>
       {renderHeader()}
+      {filteredProducts?.length === 0 ? (
+        <EmptyState
+          type='search'
+          message='Pas de produits trouvé pour votre recherche'
+        />
+      ): (
+        <FlatList
+          data={filteredProducts}
+          keyExtractor={(item) => item.id.toString()}
+          numColumns={2}
+          renderItem={({item}) => (
+            <View style={styles.productContainer}>
+              <ProductCard product={item} customStyle={{ width: '100%'}}/>
+            </View>
+          )}
+          contentContainerStyle={styles.productsGrid}
+          columnWrapperStyle={styles.columnWrapper}
+          showsVerticalScrollIndicator
+          ListEmptyComponent={<View style={styles.footer}/>}
+        />
+      )}
+      {loading && (
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+          <LoadingSpinner fullScreen/>
+        </View>
+      )}
     </Wrapper>
   )
 }
