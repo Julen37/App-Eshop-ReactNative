@@ -163,6 +163,18 @@ const ShopScreen = () => {
     setIsFilterActive(true);
   }
 
+  // Réinitialisation des filtres et tri
+  const handleResetFilter = () => {
+    // Tri par défaut (prix croissant)
+    sortProducts("price-asc");
+    // Aucune option de tri active
+    setActiveSortOption(null);
+    // Fermer la modal
+    setShowShortModal(false);
+    // Désactiver l'indicateur de filtre
+    setIsFilterActive(false);
+  };
+
   return (
     <Wrapper>
       {renderHeader()}
@@ -258,6 +270,20 @@ const ShopScreen = () => {
                 Meilleure note
               </Text>
             </TouchableOpacity>
+            {isFilterActive && (
+              <TouchableOpacity
+                style={styles.sortOption}
+                onPress={handleResetFilter}
+              >
+                <Text 
+                  style={[styles.sortOptionText,
+                    { color: AppColors.error}
+                  ]}
+                >
+                  Supprimer les filtres
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </Modal>
