@@ -60,6 +60,7 @@ const ShopScreen = () => {
       <View style={styles.header}>
         <Text style={styles.title}>Tous les produits</Text>
         <View style={{flexDirection: 'row', width: '100%'}}>
+          {/* Bouton searchbar */}
             <TouchableOpacity 
               style={styles.searchRow}
               onPress={() => router.push("/(tabs)/search")}
@@ -77,6 +78,7 @@ const ShopScreen = () => {
                 />
               </View>
           </TouchableOpacity>
+          {/* Bouton filtre */}
           <TouchableOpacity
             onPress={ () => setShowShortModal(true)}
             style={[
@@ -215,7 +217,46 @@ const ShopScreen = () => {
               ]}
               onPress={() => handleSort("price-asc")}
             >
-              <Text style={styles.sortOptionText}>Prix: Plus bas au plus élevé</Text>
+              <Text 
+                style={[
+                  styles.sortOptionText,
+                  activeSortOption === "price-asc" && styles.activeSortText,
+                ]}
+              >
+                Prix: Plus bas au plus élevé
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.sortOption,
+                activeSortOption === "price-desc" && styles.activeSortButton,
+              ]}
+              onPress={() => handleSort("price-desc")}
+            >
+              <Text 
+                style={[
+                  styles.sortOptionText,
+                  activeSortOption === "price-desc" && styles.activeSortText,
+                ]}
+              >
+                Prix: Plus élevé au plus bas
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.sortOption,
+                activeSortOption === "rating" && styles.activeSortButton,
+              ]}
+              onPress={() => handleSort("rating")}
+            >
+              <Text 
+                style={[
+                  styles.sortOptionText,
+                  activeSortOption === "rating" && styles.activeSortText,
+                ]}
+              >
+                Meilleure note
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
