@@ -7,6 +7,7 @@ import { Product } from '@/type';
 import { getProduct } from '@/lib/api';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import Rating from '@/components/Rating';
 
 // Récupération de la largeur de l’écran pour les styles responsifs
 const {width} = Dimensions.get("window");
@@ -78,6 +79,12 @@ const SingleProductScreen = () => {
                 {product?.category?.charAt(0).toUpperCase() + product?.category?.slice(1)}
             </Text>
             <Text style={styles.title}>{product?.title}</Text>
+            <View style={styles.ratingContainer}>
+                <Rating
+                    rating={product?.rating?.rate}
+                    count={product?.rating?.count}
+                />
+            </View>
         </View>
       </ScrollView>
     </View>
