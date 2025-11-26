@@ -4,9 +4,14 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { AppColors } from '@/constants/theme'
 import Logo from './Logo'
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
-import { router } from 'expo-router'
+import { router, useRouter } from 'expo-router'
+import { useCartStore } from '@/store/cartStore'
+import { useFavoritesStore } from '@/store/favoriteStore'
 
 const HomeHeader = () => {
+    const router = useRouter();
+    const { items } = useCartStore();
+    const { favoriteItems } = useFavoritesStore();
   return (
     <SafeAreaView style={styles.container}>
         <View style={styles.header}>
@@ -30,7 +35,7 @@ const HomeHeader = () => {
                         color={AppColors.primary[700]}
                     />
                     <View style={styles.itemsView}>
-                        <Text style={styles.itemsText}>0</Text>
+                        <Text style={styles.itemsText}>{favoriteItems?.length ? favoriteItems?.length : 0}</Text>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity 
@@ -42,7 +47,7 @@ const HomeHeader = () => {
                         color={AppColors.primary[700]}
                     />
                     <View style={styles.itemsView}>
-                        <Text style={styles.itemsText}>0</Text>
+                        <Text style={styles.itemsText}>{items?.length ? items.length : 0}</Text>
                     </View>
                 </TouchableOpacity>
             </View>

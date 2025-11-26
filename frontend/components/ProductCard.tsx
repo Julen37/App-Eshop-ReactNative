@@ -6,6 +6,9 @@ import Button from './Button';
 import Toast from 'react-native-toast-message';
 import { useRouter } from 'expo-router';
 import Rating from './Rating';
+import { useCartStore } from '@/store/cartStore';
+import { useFavoritesStore } from '@/store/favoriteStore';
+import { AntDesign } from '@expo/vector-icons';
 
 interface ProductCardProps {
     product: Product;
@@ -26,7 +29,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
         router.push(`/product/${id}` as any);
     };
 
+    const { addItem } = useCartStore();
+    const { isFavorite, toggleFavorite } = useFavoritesStore();
+    const isFav = isFavorite(id);
+
     const handleAddToCart = () => {
+        // e.stopPropagation();
+        addItem(product, 1);
         Toast.show({
             type: 'success',
             text1: `Produit ${title} ajouté au panier`,
@@ -36,6 +45,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
         })
         // Alert.alert(`Produit ${title} ajouté au panier`);
     }
+
+    const handleToggleFavorite = () => {
+        toggleFavorite(product);
+    };
 
   return (
     <TouchableOpacity style={
@@ -50,6 +63,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 style={styles.image}
                 resizeMode='contain'
             />
+            <TouchableOpacity
+                onPress={handleToggleFavorite}
+                style={[styles.favoriteButton, { borderWidth: isFav ? 1 : 0}]}
+            >
+                <AntDesign
+                    name='heart'
+                    size={18}
+                    color={isFav ? AppColors.error : AppColors.gray[400]}
+                />
+            </TouchableOpacity>
         </View>
         <View style={styles.content}>
             <Text style={styles.category}>{category}</Text>
@@ -124,7 +147,7 @@ const styles = StyleSheet.create({
         height: 32,
         justifyContent: 'center',
         alignItems: 'center',
-        borderColor: AppColors.warning,
+        borderColor: AppColors.error,
     },
     image : {
         width: '100%',
