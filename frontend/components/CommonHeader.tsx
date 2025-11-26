@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { AppColors } from '@/constants/theme'
 import { AntDesign, Feather, MaterialCommunityIcons } from '@expo/vector-icons'
@@ -78,6 +78,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         paddingTop: 16,
         zIndex: 10,
+        marginTop: Platform.OS === "android" ? 35 : 0,
     },
     backButton : {
         width: 40,

@@ -1,4 +1,4 @@
-import { Dimensions, Image, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import CommonHeader from '@/components/CommonHeader';
@@ -8,6 +8,7 @@ import { getProduct } from '@/lib/api';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Rating from '@/components/Rating';
+import { AntDesign } from '@expo/vector-icons';
 
 // Récupération de la largeur de l’écran pour les styles responsifs
 const {width} = Dimensions.get("window");
@@ -37,6 +38,7 @@ const SingleProductScreen = () => {
                 setLoading(false);
             }
         };
+        fetchProductData();
         if (id) {
             fetchProductData();
         }
@@ -85,8 +87,48 @@ const SingleProductScreen = () => {
                     count={product?.rating?.count}
                 />
             </View>
+            <Text style={styles.price}>€{product?.price.toFixed(2)}</Text>
+            <View style={styles.divider}/>
+            <Text style={styles.descriptionTitle}>Description</Text>
+            <Text style={styles.description}>{product?.description}</Text>
+            <View style={styles.quantityContainer}>
+                <Text style={styles.quantityTitle}>Quantité</Text>
+                <View style={styles.quantityControls}>
+                    <TouchableOpacity 
+                        onPress={() => {
+                            if (quantity > 1) {
+                                setQuantity((prev) => prev-1)
+                            }
+                        }}
+                        disabled={quantity <= 1}
+                        style={styles.quantityButton}
+                    >
+                        <AntDesign
+                            name='minus'
+                            size={20}
+                            color={AppColors.primary[600]}
+                        />
+                    </TouchableOpacity>
+                    <Text style={styles.quantityValue}>{quantity}</Text>
+                    <TouchableOpacity 
+                        onPress={() => {
+                            setQuantity((prev) => prev+1)
+                        }}
+                        style={styles.quantityButton}
+                    >
+                        <AntDesign
+                            name='plus'
+                            size={20}
+                            color={AppColors.primary[600]}
+                        />
+                    </TouchableOpacity>
+                </View>
+            </View>
         </View>
       </ScrollView>
+      <View style={styles.footer}>
+        <Text style={styles.totalPrice}>Total: €{(product?.price * quantity).toFixed(2)}</Text>
+      </View>
     </View>
   )
 }
@@ -124,7 +166,7 @@ const styles = StyleSheet.create({
     },
     footer : {
         position: 'absolute',
-        bottom: 50,
+        bottom: 70, //normalement 50
         left: 0,
         right: 0,
         backgroundColor: AppColors.background.primary,
