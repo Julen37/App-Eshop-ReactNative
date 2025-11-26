@@ -9,6 +9,7 @@ import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Rating from '@/components/Rating';
 import { AntDesign } from '@expo/vector-icons';
+import Toast from 'react-native-toast-message';
 
 // Récupération de la largeur de l’écran pour les styles responsifs
 const {width} = Dimensions.get("window");
@@ -63,6 +64,15 @@ const SingleProductScreen = () => {
                 />
             </View>
         );
+    };
+
+    const handleAddToCart = () => {
+        Toast.show({
+            type: 'success',
+            text1: `Produit ${product?.title} ajouté au panier`,
+            text2: "Voir le panier pour finaliser votre achat",
+            visibilityTime: 2000,
+        });
     };
 
   return (
@@ -128,6 +138,11 @@ const SingleProductScreen = () => {
       </ScrollView>
       <View style={styles.footer}>
         <Text style={styles.totalPrice}>Total: €{(product?.price * quantity).toFixed(2)}</Text>
+        <Button
+            title='Ajouter au panier'
+            onPress={handleAddToCart}
+            style={styles.addToCartButton}
+        />
       </View>
     </View>
   )
@@ -166,7 +181,7 @@ const styles = StyleSheet.create({
     },
     footer : {
         position: 'absolute',
-        bottom: 70, //normalement 50
+        bottom: 85, //normalement 50
         left: 0,
         right: 0,
         backgroundColor: AppColors.background.primary,
@@ -206,7 +221,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginBottom: 24,
+        marginBottom: 55,
     },
     description : {
         fontFamily: 'Inter-Regular',
