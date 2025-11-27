@@ -67,7 +67,7 @@ const CartScreen = () => {
       if (error) {
         throw new Error(`Echec de sauvegarde de la commande: ${error.message}`);
       }
-
+      
       // Préparation du payload à envoyer au serveur de paiement Stripe
       const payload= {
         price: total,
@@ -76,7 +76,7 @@ const CartScreen = () => {
 
       // Envoi de la requête POST au serveur local qui gère le paiement (adresse à adapter avec ipconfig / ipv4)
       const response = await axios.post(
-        "http://192.168.43.10:8000/checkout", //reseau partagé
+        "http://192.168.43.10:8000/checkout", //reseau perso
         // "http://aremplir:8000/checkout", //maison
         // "http://localhost:8000/checkout",
         payload,
@@ -87,7 +87,33 @@ const CartScreen = () => {
         }
       );
       // console.log("response:", response);
-      
+      // Récupération des données de paiement Stripe dans la réponse
+      const { paymentIntent, ephemeralKey, customer } = response.data;
+      // console.log("res", paymentIntent, ephemeralKey, customer);
+      if (!paymentIntent || !ephemeralKey || !customer) {
+        throw new Error("Données Stripe requises manquantes depuis le serveur");
+      } else {
+        // Affichage de la confirmation commande
+        Toast.show({
+          type: "success",
+          text1: "Commande passée",
+          text2: "Commande passée avec succés",
+          position: "bottom",
+          visibilityTime: 2000,
+        });
+        // Navigation vers l’écran de paiement avec données Stripe et Id commande Supabase
+        router.push({
+          pathname: "/(tabs)/payment",
+          params: {
+            paymentIntent,
+            ephemeralKey,
+            customer,
+            orderId:data.id, // Id de la commande pour suivi/maj
+            total: total,
+          },
+        });
+      }
+
   } catch (error) {
     // Gestion des erreurs générales avec notification toast
     Toast.show({
