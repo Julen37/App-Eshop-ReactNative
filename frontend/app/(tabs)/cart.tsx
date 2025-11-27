@@ -1,6 +1,6 @@
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
-import { useRouter } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { useCartStore } from '@/store/cartStore';
 import { useAuthStore } from '@/store/authStore';
 import MainLayout from '@/components/MainLayout';
@@ -8,6 +8,7 @@ import EmptyState from '@/components/EmptyState';
 import { AppColors } from '@/constants/theme';
 import { Title } from '@/components/customText';
 import CartItem from '@/components/CartItem';
+import Button from '@/components/Button';
 
 const CartScreen = () => {
   const router = useRouter();
@@ -16,10 +17,18 @@ const CartScreen = () => {
   const { user } = useAuthStore();
   const [loading, setLoading] = useState(false);
 
+  const subtotal = getTotalPrice();
+  const shippingCost = subtotal > 100 ? 5.99 : 0;
+  const total = subtotal + shippingCost;
+
+  const handlePlaceOrder = async() => {
+
+  }
+
   return (
     <MainLayout>
       {items?.length > 0 ? (
-        <>
+        <View style={styles.container}>
           <View style={styles.headerView}>
             <View style={styles.header}>
               <Title>Produits du panier</Title>
@@ -43,9 +52,38 @@ const CartScreen = () => {
           <View style={styles.summaryContainer}>
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>Sous-total: </Text>
+              <Text style={styles.summaryValue}>€{subtotal.toFixed(2)}</Text>
             </View>
+            {shippingCost > 0 && (
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>Frais de port: </Text>
+                <Text style={styles.summaryValue}>€{shippingCost.toFixed(2)}</Text>
+              </View>
+            )}
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>Total: </Text>
+              <Text style={styles.summaryValue}>€{total.toFixed(2)}</Text>
+            </View>
+            <Button
+              title='Passer commande'
+              fullWidth
+              style={styles.checkoutButton}
+              disabled = {!user || loading}
+              onPress={handlePlaceOrder}
+            />
+            {!user && (
+              <View style={styles.alertView}>
+                <Text style={styles.alertText}>
+                  Connectez-vous pour passer commande
+                </Text>
+                <Link href={"/(tabs)/login"}>
+                  <Text style={styles.loginText}>Connexion</Text>
+                </Link>
+              </View>
+
+            )}
           </View>
-        </>
+        </View>
       ) : (
         <EmptyState
           type='cart'
