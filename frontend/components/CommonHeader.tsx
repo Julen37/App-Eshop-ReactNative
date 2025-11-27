@@ -51,7 +51,7 @@ const CommonHeader = ({isFav, showCart, handleToggleFavorite}:Props) => {
             <TouchableOpacity 
                 style={[
                     styles.favoriteButton,
-                    isFav && styles.activeFavoriteButton
+                    // isFav && styles.activeFavoriteButton
                 ]}
                 onPress={()=> router.push("/(tabs)/cart")}
             >
@@ -59,7 +59,8 @@ const CommonHeader = ({isFav, showCart, handleToggleFavorite}:Props) => {
                     name='cart-outline'
                     size={24}
                     color={
-                        isFav ? AppColors.background.primary : AppColors.text.primary
+                        // isFav ? AppColors.background.primary :
+                         AppColors.text.primary
                     }
                     fill={isFav ? AppColors.background.primary : "transparent"}
                 />

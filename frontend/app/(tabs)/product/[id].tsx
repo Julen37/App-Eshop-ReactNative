@@ -10,6 +10,8 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import Rating from '@/components/Rating';
 import { AntDesign } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
+import { useCartStore } from '@/store/cartStore';
+import { useFavoritesStore } from '@/store/favoriteStore';
 
 // Récupération de la largeur de l’écran pour les styles responsifs
 const {width} = Dimensions.get("window");
@@ -23,9 +25,11 @@ const SingleProductScreen = () => {
     const [error, setError] = useState<string | null>(null);
     const [quantity, setQuantity] = useState(1);
     const idNum = Number(id);
-
+    const {addItem} = useCartStore();
+    const { isFavorite, toggleFavorite } = useFavoritesStore();
+    
     const router = useRouter();
-
+    
     useEffect(() => {
         const fetchProductData = async () => {
             setLoading(true);
@@ -45,7 +49,7 @@ const SingleProductScreen = () => {
         }
     }, [id]);
     // console.log('Product data:', product);
-
+    
     if (loading) {
         return (
             <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
@@ -61,12 +65,15 @@ const SingleProductScreen = () => {
                     title='Retour'
                     onPress={() => router.back()}
                     style={styles.errorButton}
-                />
+                    />
             </View>
         );
     };
 
+    const isFav = isFavorite(product?.id);
+
     const handleAddToCart = () => {
+        addItem(product, quantity);
         Toast.show({
             type: 'success',
             text1: `Produit ${product?.title} ajouté au panier`,
@@ -75,9 +82,15 @@ const SingleProductScreen = () => {
         });
     };
 
+    const handleToggleFavorite = () => {
+        if (product) {
+            toggleFavorite(product);
+        };
+    };
+
   return (
     <View style={styles.headerContainerStyle}>
-      <CommonHeader/>
+      <CommonHeader isFav={isFav} handleToggleFavorite={handleToggleFavorite}/>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.imageContainer}>
             <Image
