@@ -11,6 +11,7 @@ import CartItem from '@/components/CartItem';
 import Button from '@/components/Button';
 import Toast from 'react-native-toast-message';
 import { supabase } from '@/lib/supabase';
+import axios from "axios";
 
 const CartScreen = () => {
   const router = useRouter();
@@ -66,6 +67,27 @@ const CartScreen = () => {
       if (error) {
         throw new Error(`Echec de sauvegarde de la commande: ${error.message}`);
       }
+
+      // Préparation du payload à envoyer au serveur de paiement Stripe
+      const payload= {
+        price: total,
+        email: user?.email,
+      };
+
+      // Envoi de la requête POST au serveur local qui gère le paiement (adresse à adapter avec ipconfig / ipv4)
+      const response = await axios.post(
+        "http://192.168.43.10:8000/checkout", //reseau partagé
+        // "http://aremplir:8000/checkout", //maison
+        // "http://localhost:8000/checkout",
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }
+      );
+      // console.log("response:", response);
+      
   } catch (error) {
     // Gestion des erreurs générales avec notification toast
     Toast.show({
