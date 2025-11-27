@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import { useRouter } from 'expo-router';
 import { useCartStore } from '@/store/cartStore';
@@ -7,6 +7,7 @@ import MainLayout from '@/components/MainLayout';
 import EmptyState from '@/components/EmptyState';
 import { AppColors } from '@/constants/theme';
 import { Title } from '@/components/customText';
+import CartItem from '@/components/CartItem';
 
 const CartScreen = () => {
   const router = useRouter();
@@ -18,10 +19,33 @@ const CartScreen = () => {
   return (
     <MainLayout>
       {items?.length > 0 ? (
-        <View style={styles.header}>
-          <Title>Produits du panier</Title>
-          <Text style={styles.itemCount}>{items?.length} produits</Text>
-        </View>
+        <>
+          <View style={styles.headerView}>
+            <View style={styles.header}>
+              <Title>Produits du panier</Title>
+              <Text style={styles.itemCount}>{items?.length} produits</Text>
+            </View>
+            <View>
+              <TouchableOpacity onPress={() => clearCart()}>
+                <Text style={styles.resetText}>Vider le panier</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          <FlatList
+            data={items}
+            keyExtractor={(item) => item.product.id.toString()}
+            renderItem={({item}) => ( 
+              <CartItem product={item.product} quantity={item.quantity}/>
+            )}
+            contentContainerStyle={styles.cartItemsContainer}
+            showsVerticalScrollIndicator={false}
+          />
+          <View style={styles.summaryContainer}>
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>Sous-total: </Text>
+            </View>
+          </View>
+        </>
       ) : (
         <EmptyState
           type='cart'
