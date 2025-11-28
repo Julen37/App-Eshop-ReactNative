@@ -25,7 +25,7 @@ const CartScreen = () => {
   const total = subtotal + shippingCost;
 
   // Fonction asynchrone pour la passation de commande
-  const handlePlaceOrder = async() => {
+  const handlePlaceOrder = async () => {
     // Vérifie si l’utilisateur est connecté
     if(!user) {
       Toast.show({
@@ -39,31 +39,31 @@ const CartScreen = () => {
       return;
     }
 
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    // Préparation des données de commande pour insertion dans Supabase
-    const orderData = {
-      user_email: user?.email,
-      total_price: total,
-      items: items.map((item) => ({
-        product_id: item.product.id,
-        title: item.product.title,
-        price: item.product.price,
-        quantity: item.quantity,
-        image: item.product.image,
-      })),
-      payment_status: "En attente",
-    };
+      // Préparation des données de commande pour insertion dans Supabase
+      const orderData = {
+        user_email: user?.email,
+        total_price: total,
+        items: items.map((item) => ({
+          product_id: item.product.id,
+          title: item.product.title,
+          price: item.product.price,
+          quantity: item.quantity,
+          image: item.product.image,
+        })),
+        payment_status: "En attente",
+      };
 
-    // Insertion de la commande dans la table "orders" de Supabase
-    const {data, error} = await supabase
-      .from("orders")
-      .insert([orderData])
-      .select()
-      .single();
+      // Insertion de la commande dans la table "orders" de Supabase
+      const {data, error} = await supabase
+        .from("orders")
+        .insert([orderData])
+        .select()
+        .single();
 
-      // Gestion erreur insertion
+        // Gestion erreur insertion
       if (error) {
         throw new Error(`Echec de sauvegarde de la commande: ${error.message}`);
       }
@@ -76,9 +76,10 @@ const CartScreen = () => {
 
       // Envoi de la requête POST au serveur local qui gère le paiement (adresse à adapter avec ipconfig / ipv4)
       const response = await axios.post(
-        "http://192.168.43.10:8000/checkout", //reseau perso
         // "http://aremplir:8000/checkout", //maison
         // "http://localhost:8000/checkout",
+        // "http://192.168.50.17:8000/checkout", //afpa reseau wifi
+        "http://192.168.43.10:8000/checkout", //reseau perso
         payload,
         {
           headers: {
@@ -87,9 +88,11 @@ const CartScreen = () => {
         }
       );
       // console.log("response:", response);
+      
       // Récupération des données de paiement Stripe dans la réponse
       const { paymentIntent, ephemeralKey, customer } = response.data;
       // console.log("res", paymentIntent, ephemeralKey, customer);
+
       if (!paymentIntent || !ephemeralKey || !customer) {
         throw new Error("Données Stripe requises manquantes depuis le serveur");
       } else {
@@ -108,26 +111,26 @@ const CartScreen = () => {
             paymentIntent,
             ephemeralKey,
             customer,
-            orderId:data.id, // Id de la commande pour suivi/maj
+            orderId: data.id, // Id de la commande pour suivi/maj
             total: total,
           },
         });
       }
 
-  } catch (error) {
-    // Gestion des erreurs générales avec notification toast
-    Toast.show({
-        type: "error",
-        text1: "Commande échouée",
-        text2: "Echec de la commande",
-        position: "bottom",
-        visibilityTime: 2000,
-    });
-    console.log("Erreur de la commande", error);
-  } finally {
-    setLoading(false);
-  }
-};
+    } catch (error) {
+      // Gestion des erreurs générales avec notification toast
+      Toast.show({
+          type: "error",
+          text1: "Commande échouée",
+          text2: "Echec de la commande",
+          position: "bottom",
+          visibilityTime: 2000,
+      });
+      console.log("Erreur de la commande", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <MainLayout>

@@ -1,4 +1,5 @@
 import { Router } from "express";
+import stripe from "../lib/stripe.js";
 
 const router = Router();
 
