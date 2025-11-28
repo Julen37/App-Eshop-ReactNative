@@ -115,6 +115,7 @@ const CartScreen = () => {
             total: total,
           },
         });
+        clearCart();
       }
 
     } catch (error) {
