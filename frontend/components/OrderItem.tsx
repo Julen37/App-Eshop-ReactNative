@@ -1,6 +1,7 @@
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Alert, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import { AppColors } from '@/constants/theme';
+import { Feather } from '@expo/vector-icons';
 
 interface Order {
     id: number;
@@ -28,14 +29,31 @@ const OrderItem = ({order, onDelete, email}: Props) => {
 
     const handlePayNow = () => {
 
-    }
+    };
+
+    const handleDelete = () => {
+        Alert.alert(
+            "Supprimer la commande",
+            `Etes-vous sûr de vouloir supprimer la commande #${order?.id} ?`,
+            [{
+                text: "Annuler",
+                style: "cancel",
+            },
+            {
+                text: "Supprimer",
+                style: "destructive",
+                onPress: () => onDelete(order?.id),
+            }]
+        );
+    };
 
   return (
     <View style={styles.orderView}>
         <View style={styles.orderItem}>
             <Text style={styles.orderId}>Commande #{order?.id}</Text>
             <Text>Total: €{order?.total_price.toFixed(2)}</Text>
-            <Text style={[styles.orderStatus,
+            <Text style={[
+                styles.orderStatus,
                 {color: isPaid ? AppColors.success : AppColors.error}
             ]}>
                 Statut: {isPaid ? "Paiement effectué" : "En attente"}
@@ -46,7 +64,7 @@ const OrderItem = ({order, onDelete, email}: Props) => {
             {!isPaid && (
                 <TouchableOpacity
                     onPress={handlePayNow}
-                    style={styles.payNowText}
+                    style={styles.payNowButton}
                 >
                     {loading ? (
                         <ActivityIndicator
@@ -59,6 +77,22 @@ const OrderItem = ({order, onDelete, email}: Props) => {
                 </TouchableOpacity>
             )}
         </View>
+        {order?.items[0]?.image && (
+            <Image 
+                source={{ uri: order?.items[0]?.image }}
+                style={styles.image}
+            />
+        )}
+        <TouchableOpacity
+            onPress={handleDelete} 
+            style={styles.deleteButton}
+        >
+            <Feather
+                name='trash-2'
+                color={AppColors.error}
+                size={20}
+            />
+        </TouchableOpacity>
     </View>
   )
 }

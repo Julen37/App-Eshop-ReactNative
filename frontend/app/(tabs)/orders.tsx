@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, Text, View } from 'react-native'
+import { Alert, FlatList, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useAuthStore } from '@/store/authStore';
 import { useRouter } from 'expo-router';
@@ -9,6 +9,7 @@ import { AppColors } from '@/constants/theme';
 import EmptyState from '@/components/EmptyState';
 import { Title } from '@/components/customText';
 import OrderItem from '@/components/OrderItem';
+import Toast from 'react-native-toast-message';
 
 interface Order {
     id: number;
@@ -67,9 +68,44 @@ const OrdersScreen = () => {
         fetchOrders();
     }, [user]);
 
-    const handleDeleteOrder = () => {
+    const handleDeleteOrder = async (orderId:number) => {
+        try {
+            if (!user) {
+                throw new Error('User non connecté');
+            }
+            //Verifie que la commande existe
+            const { data: order, error: fetchError } = await supabase
+                .from("orders")
+                .select("id, user_email")
+                .eq("id", orderId)
+                .single();
 
-    }
+            if (fetchError || !orders) {
+                throw new Error('Commande non trouvée');
+            };
+
+            // réalise le delete
+            const { error } = await supabase
+                .from("orders")
+                .delete()
+                .eq("id", orderId);
+            
+            if (error) {
+                throw new Error(`Echec de suppresion de commande: ${error?.message}`)
+            };
+            fetchOrders();
+            Toast.show({
+                type: "success",
+                text1: "Commande supprimée",
+                text2: `La commande #${orderId} a été supprimé`,
+                position: "bottom",
+                visibilityTime: 2000,
+            });
+        } catch (error) {
+            console.error("Erreur dans la suppression de commande:", error);
+            Alert.alert("Error", "Echec lors de la suppression. Essayez encore.");
+        };
+    };
 
     if (error) {
         return (
