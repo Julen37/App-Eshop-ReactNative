@@ -108,7 +108,7 @@ const menuItems = [
     ),
     title: 'Adresse de livraison',
     onPress: () => {
-
+      router.push("/(tabs)/deliveryAddress");
     }
   },
   {
