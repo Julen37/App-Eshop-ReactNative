@@ -28,19 +28,25 @@ interface Props {
 }
 
 const OrderItem = ({order, onDelete, email, onViewDetails}: Props) => {
+    // Vérifie si la commande est déjà payée (status exact "success")
     const isPaid = order?.payment_status === "success";
-    const [loading, setLoading] = useState(false);
-    const [disable, setDisable] = useState(false);
+
+    // États pour le bouton de paiement 
+    const [loading, setLoading] = useState(false);      // Affiche le spinner pendant l'API
+    const [disable, setDisable] = useState(false);      // Désactive le bouton pendant le traitement
     const router = useRouter();
 
+    // Initialise le paiement Stripe via l'API backend
     const handlePayNow = async () => {
         setLoading(true);
         setDisable(true);
+        // Payload envoyé au backend pour créer l'intention de paiement
         const payload = {
             price: order?.total_price,
             email: email,
         };
         try {
+            // Appel API vers le backend pour créer l'intention Stripe
             const response = await axios.post(`${BASE_URL}`, // enlever /checkout sinon ca fait doublon avec base_url
                 payload, {
                     headers: { "Content-Type": "application/json" },
@@ -48,10 +54,12 @@ const OrderItem = ({order, onDelete, email, onViewDetails}: Props) => {
             );
             const { paymentIntent, ephemeralKey, customer } = response.data;
             // console.log(paymentIntent, ephemeralKey, customer);
+             // Demande confirmation avant redirection vers l'écran de paiement
             if (response?.data) {
                 Alert.alert("Payer maintenant", `Initiation du paiement pour la commande #${order?.id}`, [
                     {text: "Annuler"},
                     {text: "Payer", onPress: () => {
+                        // Redirige vers l'écran de paiement avec tous les params Stripe
                         router.push({
                             pathname: "/(tabs)/payment",
                             params: {
@@ -69,11 +77,13 @@ const OrderItem = ({order, onDelete, email, onViewDetails}: Props) => {
             console.error("Erreur dans l'action de vouloir payer la commande:", error);
             Alert.alert("Error", "Echec lors de l'action de payer. Essayez encore.");
         } finally {
+            // Remet le bouton dans son état normal
             setLoading(false);
             setDisable(false);
         }
     };
 
+    // Demande confirmation avant suppression de la commande
     const handleDelete = () => {
         Alert.alert(
             "Supprimer la commande",
@@ -92,31 +102,40 @@ const OrderItem = ({order, onDelete, email, onViewDetails}: Props) => {
 
   return (
     <View style={styles.orderView}>
+        {/* Conteneur principal de l'article de commande */}
         <View style={styles.orderItem}>
+            {/* Identifiant de la commande */}
             <Text style={styles.orderId}>Commande #{order?.id}</Text>
+            {/* Montant total */}
             <Text>Total: €{order?.total_price.toFixed(2)}</Text>
+            {/* Statut avec couleur conditionnelle (vert/rouge) */}
             <Text style={[
                 styles.orderStatus,
                 {color: isPaid ? AppColors.success : AppColors.error}
             ]}>
                 Statut: {isPaid ? "Paiement effectué" : "En attente"}
             </Text>
+            {/* Date de création formatée */}
             <Text style={styles.orderDate}>
                 Passé le: {new Date(order.created_at).toLocaleDateString()}
             </Text>
+            {/* Zone des boutons d'action */}
             <View style={styles.buttonContainer}>
+                {/* Bouton "Détails" (toujours visible) */}
                 <TouchableOpacity
                     onPress={() => onViewDetails(order)}
                     style={styles.viewDetailsButton}
                 >
                     <Text style={styles.viewDetailsText}>Détails</Text>
                 </TouchableOpacity>
+                {/* Bouton "Payer" (SEULEMENT si non payé) */}
                 {!isPaid && (
                     <TouchableOpacity
                         disabled={disable}
                         onPress={handlePayNow}
                         style={styles.payNowButton}
                     >
+                        {/*Spinner pendant l'appel API */}
                         {loading ? (
                             <ActivityIndicator
                                 size="small"
@@ -129,12 +148,14 @@ const OrderItem = ({order, onDelete, email, onViewDetails}: Props) => {
                 )}
             </View>
         </View>
+        {/* Image du premier article (conditionnelle) */}
         {order?.items[0]?.image && (
             <Image 
                 source={{ uri: order?.items[0]?.image }}
                 style={styles.image}
             />
         )}
+        {/* Bouton supprimer (icône corbeille en bas à droite) */}
         <TouchableOpacity
             onPress={handleDelete} 
             style={styles.deleteButton}
