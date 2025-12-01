@@ -24,9 +24,10 @@ interface Props {
     order: Order;
     onDelete: (id: number) => void;
     email: string | undefined;
+    onViewDetails: (order:Order) => void;
 }
 
-const OrderItem = ({order, onDelete, email}: Props) => {
+const OrderItem = ({order, onDelete, email, onViewDetails}: Props) => {
     const isPaid = order?.payment_status === "success";
     const [loading, setLoading] = useState(false);
     const [disable, setDisable] = useState(false);
@@ -103,22 +104,30 @@ const OrderItem = ({order, onDelete, email}: Props) => {
             <Text style={styles.orderDate}>
                 Passé le: {new Date(order.created_at).toLocaleDateString()}
             </Text>
-            {!isPaid && (
+            <View style={styles.buttonContainer}>
                 <TouchableOpacity
-                    disabled={disable}
-                    onPress={handlePayNow}
-                    style={styles.payNowButton}
+                    onPress={() => onViewDetails(order)}
+                    style={styles.viewDetailsButton}
                 >
-                    {loading ? (
-                        <ActivityIndicator
-                            size="small"
-                            color={AppColors.background.primary}
-                        />
-                    ) : (
-                        <Text style={styles.payNowText}>Payer</Text>
-                    )}
+                    <Text style={styles.viewDetailsText}>Détails</Text>
                 </TouchableOpacity>
-            )}
+                {!isPaid && (
+                    <TouchableOpacity
+                        disabled={disable}
+                        onPress={handlePayNow}
+                        style={styles.payNowButton}
+                    >
+                        {loading ? (
+                            <ActivityIndicator
+                                size="small"
+                                color={AppColors.background.primary}
+                            />
+                        ) : (
+                            <Text style={styles.payNowText}>Payer</Text>
+                        )}
+                    </TouchableOpacity>
+                )}
+            </View>
         </View>
         {order?.items[0]?.image && (
             <Image 
