@@ -10,6 +10,7 @@ import EmptyState from '@/components/EmptyState';
 import { Title } from '@/components/customText';
 import OrderItem from '@/components/OrderItem';
 import Toast from 'react-native-toast-message';
+import Loader from '@/components/Loader';
 
 interface Order {
     id: number;
@@ -107,6 +108,10 @@ const OrdersScreen = () => {
         };
     };
 
+    if (loading) {
+        return <Loader />
+    }
+    
     if (error) {
         return (
             <Wrapper>
