@@ -2,6 +2,9 @@ import { ActivityIndicator, Alert, Image, StyleSheet, Text, TouchableOpacity, Vi
 import React, { useState } from 'react'
 import { AppColors } from '@/constants/theme';
 import { Feather } from '@expo/vector-icons';
+import axios from 'axios';
+import { BASE_URL } from '@/config';
+import { useRouter } from 'expo-router';
 
 interface Order {
     id: number;
@@ -26,9 +29,48 @@ interface Props {
 const OrderItem = ({order, onDelete, email}: Props) => {
     const isPaid = order?.payment_status === "success";
     const [loading, setLoading] = useState(false);
+    const [disable, setDisable] = useState(false);
+    const router = useRouter();
 
-    const handlePayNow = () => {
-
+    const handlePayNow = async () => {
+        setLoading(true);
+        setDisable(true);
+        const payload = {
+            price: order?.total_price,
+            email: email,
+        };
+        try {
+            const response = await axios.post(`${BASE_URL}`, // enlever /checkout sinon ca fait doublon avec base_url
+                payload, {
+                    headers: { "Content-Type": "application/json" },
+                }
+            );
+            const { paymentIntent, ephemeralKey, customer } = response.data;
+            // console.log(paymentIntent, ephemeralKey, customer);
+            if (response?.data) {
+                Alert.alert("Payer maintenant", `Initiation du paiement pour la commande #${order?.id}`, [
+                    {text: "Annuler"},
+                    {text: "Payer", onPress: () => {
+                        router.push({
+                            pathname: "/(tabs)/payment",
+                            params: {
+                                paymentIntent, ephemeralKey,
+                                customer,
+                                orderId: order?.id,
+                                total: order?.total_price,
+                            }
+                        });
+                    }},
+                ]);
+            };
+            
+        } catch (error) {
+            console.error("Erreur dans l'action de vouloir payer la commande:", error);
+            Alert.alert("Error", "Echec lors de l'action de payer. Essayez encore.");
+        } finally {
+            setLoading(false);
+            setDisable(false);
+        }
     };
 
     const handleDelete = () => {
@@ -63,6 +105,7 @@ const OrderItem = ({order, onDelete, email}: Props) => {
             </Text>
             {!isPaid && (
                 <TouchableOpacity
+                    disabled={disable}
                     onPress={handlePayNow}
                     style={styles.payNowButton}
                 >

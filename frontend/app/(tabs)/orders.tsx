@@ -1,5 +1,5 @@
 import { Alert, FlatList, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useAuthStore } from '@/store/authStore';
 import { useRouter } from 'expo-router';
 import { supabase } from '@/lib/supabase';
@@ -11,6 +11,7 @@ import { Title } from '@/components/customText';
 import OrderItem from '@/components/OrderItem';
 import Toast from 'react-native-toast-message';
 import Loader from '@/components/Loader';
+import { useFocusEffect } from '@react-navigation/native';
 
 interface Order {
     id: number;
@@ -65,9 +66,10 @@ const OrdersScreen = () => {
     };
     // console.log(orders);
 
-    useEffect(() => {
+    useFocusEffect(
+        useCallback(() => {
         fetchOrders();
-    }, [user]);
+    }, [user, router]));
 
     const handleDeleteOrder = async (orderId:number) => {
         try {
@@ -111,7 +113,7 @@ const OrdersScreen = () => {
     if (loading) {
         return <Loader />
     }
-    
+
     if (error) {
         return (
             <Wrapper>
