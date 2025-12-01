@@ -1,5 +1,5 @@
 import { Alert, FlatList, StyleSheet, Text, View } from 'react-native'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { useAuthStore } from '@/store/authStore';
 import { useRouter } from 'expo-router';
 import { supabase } from '@/lib/supabase';
@@ -13,6 +13,7 @@ import Toast from 'react-native-toast-message';
 import Loader from '@/components/Loader';
 import { useFocusEffect } from '@react-navigation/native';
 
+// Interface TypeScript pour typer une commande
 interface Order {
     id: number;
     total_price: number;
@@ -27,6 +28,7 @@ interface Order {
     }[];
 }
 
+// Écran principal listant les commandes de l’utilisateur
 const OrdersScreen = () => {
     const { user } = useAuthStore();
     const router = useRouter();
@@ -34,17 +36,21 @@ const OrdersScreen = () => {
     const [ loading, setLoading ] = useState(true);
     const [ error, setError ] = useState<string | null>(null);
 
+    // Récupère les commandes de l’utilisateur connecté depuis Supabase
     const fetchOrders = async () => {
         if (!user) {
+            // Si pas d’utilisateur, message d’erreur et on arrête
             setError("Connectez-vous pour voir vos commandes");
             setLoading(false);
             return;
         }
         try {
             setLoading(true)
+            // Récupère l’utilisateur depuis Supabase (optionnel si tu utilises déjà `user`)
             const {data: {user:supabaseUser},} = await supabase.auth.getUser();
             // console.log(supabaseUser?.email);
             
+            // Requête pour récupérer les commandes associées à l’email utilisateur
             const {data, error} = await supabase
                 .from("orders")
                 .select("id, total_price, payment_status, created_at, items, user_email")
@@ -52,25 +58,31 @@ const OrdersScreen = () => {
                 .order("created_at", {ascending: false});
 
             if (error) {
+                // Si la requête échoue, on lève une erreur
                 throw new Error(`Failed to fetch orders: ${error.message}`)
             }
 
+            // Met à jour l’état avec les commandes récupérées (ou tableau vide)
             setOrders(data || []);
 
         } catch (error: any) {
             console.error("Error fetching orders:", error);
+            // Stocke le message d’erreur pour affichage à l’écran
             setError(error.message || "Echec dans le chargement de vos commandes");
         } finally {
+            // Dans tous les cas, on stoppe l’indicateur de chargement
             setLoading(false);
         }
     };
     // console.log(orders);
 
+    // Quand l’écran prend le focus, on recharge la liste des commandes
     useFocusEffect(
         useCallback(() => {
         fetchOrders();
     }, [user, router]));
 
+    // Supprime une commande par son id
     const handleDeleteOrder = async (orderId:number) => {
         try {
             if (!user) {
@@ -87,7 +99,7 @@ const OrdersScreen = () => {
                 throw new Error('Commande non trouvée');
             };
 
-            // réalise le delete
+            // Supprime la commande dans la table `orders`
             const { error } = await supabase
                 .from("orders")
                 .delete()
@@ -96,7 +108,9 @@ const OrdersScreen = () => {
             if (error) {
                 throw new Error(`Echec de suppresion de commande: ${error?.message}`)
             };
+            // Recharge la liste après suppression
             fetchOrders();
+            // Affiche une notification de succès
             Toast.show({
                 type: "success",
                 text1: "Commande supprimée",
@@ -106,6 +120,7 @@ const OrdersScreen = () => {
             });
         } catch (error) {
             console.error("Erreur dans la suppression de commande:", error);
+            // Affiche une alerte en cas d’erreur
             Alert.alert("Error", "Echec lors de la suppression. Essayez encore.");
         };
     };
@@ -114,6 +129,7 @@ const OrdersScreen = () => {
         return <Loader />
     }
 
+    // Si une erreur existe, on affiche un état d’erreur simple
     if (error) {
         return (
             <Wrapper>
