@@ -40,13 +40,18 @@ const DeliveryAddressScreen: React.FC = () => {
                 // Résultat attendu : un seul objet (et non un tableau).
                 .single();
             setLoading(false);
+            console.log('Debug:', {data, error}); //pour voir ce qu'il se passe
 
             // Gestion des erreurs ou mise à jour du state selon la réponse.
             if (error) {
+                console.log('Error:', error);
                 Alert.alert("Erreur", "Impossible de récupérer votre commande"); // a regler ca s'affiche h24 dès qu'il y a un changement?
             } else if (data) {
+                console.log('OrderId:', data.id);
                 // On mémorise l'ID de la commande trouvée.
                 setOrderId(data.id);
+            } else {
+                console.log('Info: Aucune commande trouvée');
             }
         };
         fetchLastOrder();
@@ -54,18 +59,16 @@ const DeliveryAddressScreen: React.FC = () => {
 
     // Fonction déclenchée lors du clic sur le bouton "Ajouter l'adresse"
     const handleAddAddress = async () => {
+        console.log('User:', user?.id, 'OrderId:', orderId); // verification
+
         // Vérifie s'il y a bien une commande active pour cet utilisateur.
-        // if (!orderId) {
-        //     Alert.alert("Erreur", "Aucune commande trouvée pour l'ajout d'adresse");
-        //     return;
-        // }
-        if (!user?.email) {
-            Alert.alert("Erreur", "Utilisateur non connecté");
+        if (!user || !orderId) {
+            Alert.alert("Erreur", "Aucune commande récente trouvée pour l'ajout d'adresse");
             return;
         }
 
         // Vérifie que le champ adresse n'est pas vide ou composé uniquement d'espaces.
-        if (!address.trim) {
+        if (!address.trim()) {
             Alert.alert("Validation", "L'adresse ne peut pas être vide");
             return;
         }
@@ -75,7 +78,7 @@ const DeliveryAddressScreen: React.FC = () => {
         const { error } = await supabase
             .from("orders")
             .update({delivery_address: address})
-            .eq("user_email", user?.email);
+            .eq("id", orderId);
         setLoading(false);
 
         // Gestion de la réponse de la base de données.
