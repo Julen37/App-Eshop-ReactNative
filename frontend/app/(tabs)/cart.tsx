@@ -42,6 +42,28 @@ const CartScreen = () => {
     try {
       setLoading(true);
 
+      // recuperation de l'adresse de livraison depuis le profil user
+      const {data: profile, error: profileError} = await supabase
+        .from("profiles")
+        .select('"delivery_address"')
+        .eq("id", user.id)
+        .single();
+
+      // gestion du cas profil non trouvé
+      if (profileError && profileError.code !== "PGRST116") {
+        Toast.show({
+          type: "error",
+          text1: "Erreur",
+          text2: "Impossible de récupérer l'adresse de livraison",
+          position: "bottom",
+          visibilityTime: 2000,
+        });
+        setLoading(false);
+        return;
+      };
+
+      const deliveryAddress = profile?.delivery_address || "";
+
       // Préparation des données de commande pour insertion dans Supabase
       const orderData = {
         user_email: user?.email,
@@ -54,6 +76,7 @@ const CartScreen = () => {
           image: item.product.image,
         })),
         payment_status: "En attente",
+        delivery_address: deliveryAddress, // adresse de livraison depuis le profil
       };
 
       // Insertion de la commande dans la table "orders" de Supabase
