@@ -51,6 +51,7 @@ export default function TabLayout() {
       <Tabs.Screen name="orders" options={{ href: null }} />
       <Tabs.Screen name="payment" options={{ href: null }} />
       <Tabs.Screen name="deliveryAddress" options={{ href: null }} />
+      <Tabs.Screen name="profileEdit" options={{ href: null }} />
     </Tabs>
   );
 }

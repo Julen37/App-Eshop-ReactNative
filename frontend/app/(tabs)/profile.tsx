@@ -122,7 +122,7 @@ const menuItems = [
     ),
     title: 'Paramètres',
     onPress: () => {
-
+      router.push("/(tabs)/profileEdit");
     }
   },
 ]
