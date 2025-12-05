@@ -5,6 +5,9 @@ import { useRouter } from 'expo-router';
 import { AppColors } from '@/constants/theme';
 import { supabase } from '@/lib/supabase';
 import Button from './Button';
+import Toast from 'react-native-toast-message';
+import MainLayout from './MainLayout';
+import TitleHeader from './TitleHeader';
 
 const ProfileScreen: React.FC = () => {
     const { user } = useAuthStore();
@@ -40,7 +43,12 @@ const ProfileScreen: React.FC = () => {
 
   const saveProfile = async () => {
     if (!user){
-      Alert.alert("Erreur", "Utilisateur non connecté");
+      Toast.show({
+        type: "error",
+        text1: "Erreur",
+        text2: "Utilisateur non connecté",
+        visibilityTime: 2000,
+      });
       return;
     };
     setLoading(true);
@@ -57,41 +65,54 @@ const ProfileScreen: React.FC = () => {
 
       setLoading(false);
       if (error) {
-        Alert.alert("Erreur", "Impossible de sauvegarder le profil");
+        Toast.show({
+        type: "error",
+        text1: "Erreur",
+        text2: "Impossible de sauvegarder le profil",
+        visibilityTime: 2000,
+      });
       } else {
-        Alert.alert("Succès", "Profil mis à jour");
-        router.back();
+        Toast.show({
+        type: "success",
+        text1: "Succès",
+        text2: "Profil mis à jour avec succès",
+        visibilityTime: 2000,
+      });
+        router.push("/(tabs)/profile");
       };
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Nom complet</Text>
-      <TextInput
-        style={styles.input}  
-        value={fullName}
-        onChangeText={setFullName}
-        placeholder='Votre nom complet'
-      />
-      <Text style={styles.label}>Adresse de livraison</Text>
-      <TextInput
-        style={styles.input}  
-        value={deliveryAddress}
-        onChangeText={setDeliveryAddress}
-        placeholder='Votre adresse de livraison'
-      />
-      <Text style={styles.label}>Votre téléphone</Text>
-      <TextInput
-        style={styles.input}  
-        value={phone}
-        onChangeText={setPhone}
-        placeholder='Votre numéro de téléphone'
-        keyboardType='phone-pad'
-      />
+      <View style={styles.containerForm}>
+        <Text style={styles.label}>Nom complet</Text>
+        <TextInput
+          style={styles.input}  
+          value={fullName}
+          onChangeText={setFullName}
+          placeholder='Votre nom complet'
+        />
+        <Text style={styles.label}>Adresse de livraison</Text>
+        <TextInput
+          style={styles.input}  
+          value={deliveryAddress}
+          onChangeText={setDeliveryAddress}
+          placeholder='Votre adresse de livraison'
+        />
+        <Text style={styles.label}>Votre téléphone</Text>
+        <TextInput
+          style={styles.input}  
+          value={phone}
+          onChangeText={setPhone}
+          placeholder='Votre numéro de téléphone'
+          keyboardType='phone-pad'
+        />
+      </View>
       <Button
         title={loading ? "Sauvegarde.." : "Sauvegarder le profil"}
         onPress={saveProfile}
         disabled={loading}
+        style={styles.button}
       />
     </View>
   )
@@ -117,4 +138,10 @@ const styles = StyleSheet.create({
         padding: 10,
         marginTop: 5,
     },
+    containerForm : {
+      marginTop: "50%"
+    },
+    button: {
+    marginTop: 16,
+  },
 })
